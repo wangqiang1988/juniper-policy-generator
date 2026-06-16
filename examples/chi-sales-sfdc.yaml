@@ -1,0 +1,15 @@
+# Example 1: Sales Chicago -> Salesforce (the canonical demo)
+name: sales-chi-to-sfdc
+from_zone: users-chi
+to_zone: internet
+src_ips:
+  - 10.20.0.0/16
+  - 10.21.0.0/16
+dst_ips:
+  - 203.0.113.0/24
+tcp_ports:
+  - 443
+  - 8443
+udp_ports: []
+action: permit
+description: Sales team Chicago office -> Salesforce HTTPS

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>poac — Juniper SRX set-command generator</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --panel-2: #273449;
+    --border: #334155;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-2: #0ea5e9;
+    --ok: #4ade80;
+    --warn: #fbbf24;
+    --err: #f87171;
+    --code-bg: #0b1220;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+  }
+  header h1 { margin: 0; font-size: 20px; color: var(--accent); }
+  header .sub { color: var(--muted); font-size: 13px; }
+  main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 16px 24px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .panel h2 { margin: 0 0 12px 0; font-size: 16px; color: var(--accent); }
+  .field { margin-bottom: 12px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .field input[type="text"],
+  .field textarea,
+  .field select {
+    width: 100%;
+    background: var(--code-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 13px;
+  }
+  .field input[type="text"]:focus,
+  .field textarea:focus,
+  .field select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .field textarea { resize: vertical; min-height: 70px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .preview {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    min-height: 18px;
+    white-space: pre-wrap;
+  }
+  .preview.ok    { color: var(--ok); }
+  .preview.warn  { color: var(--warn); }
+  .preview.err   { color: var(--err); }
+  .radio-group { display: flex; gap: 12px; }
+  .radio-group label { color: var(--text); text-transform: none; letter-spacing: 0; font-size: 14px; cursor: pointer; }
+  button {
+    background: var(--accent-2);
+    color: #0b1220;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:hover { background: var(--accent); }
+  button.secondary { background: var(--panel-2); color: var(--text); }
+  button.secondary:hover { background: var(--border); }
+  .actions { display: flex; gap: 8px; margin-top: 12px; }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    overflow-x: auto;
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    max-height: 600px;
+    overflow-y: auto;
+  }
+  .error-box {
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid var(--err);
+    color: var(--err);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .summary {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+  .summary .pill {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 10px;
+    color: var(--muted);
+  }
+  .summary .pill b { color: var(--text); }
+  details summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+  details { margin-top: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>poac — Juniper SRX set-command generator</h1>
+  <div class="sub">Fill the form. The tool emits a complete <code>set</code> command block you paste into your SRX.</div>
+</header>
+<main>
+  <section class="panel">
+    <h2>Input</h2>
+    <form id="poac-form">
+      <div class="field">
+        <label>Policy name</label>
+        <input type="text" id="name" name="name" value="sales-chi-to-sfdc" required>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>From zone</label>
+          <input type="text" id="from_zone" name="from_zone" value="users-chi" required>
+        </div>
+        <div class="field">
+          <label>To zone</label>
+          <input type="text" id="to_zone" name="to_zone" value="internet" required>
+        </div>
+      </div>
+      <div class="field">
+        <label>Source IPs (one per line: IP or CIDR)</label>
+        <textarea id="src_ips" name="src_ips" rows="3" placeholder="10.20.0.0/16&#10;10.21.0.0/16">10.20.0.0/16&#10;10.21.0.1/24</textarea>
+        <div class="preview" id="src_ips_preview"></div>
+      </div>
+      <div class="field">
+        <label>Destination IPs (one per line: IP or CIDR)</label>
+        <textarea id="dst_ips" name="dst_ips" rows="3" placeholder="203.0.113.0/24">203.0.113.10</textarea>
+        <div class="preview" id="dst_ips_preview"></div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>TCP ports (one per line: port or start-end)</label>
+          <textarea id="tcp_ports" name="tcp_ports" rows="3" placeholder="443&#10;8000-8100">443&#10;8443</textarea>
+          <div class="preview" id="tcp_ports_preview"></div>
+        </div>
+        <div class="field">
+          <label>UDP ports (one per line)</label>
+          <textarea id="udp_ports" name="udp_ports" rows="3" placeholder="53"></textarea>
+          <div class="preview" id="udp_ports_preview"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Action</label>
+        <div class="radio-group">
+          <label><input type="radio" name="action" value="permit" checked> permit</label>
+          <label><input type="radio" name="action" value="deny"> deny</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Description (optional)</label>
+        <input type="text" id="description" name="description" value="Sales team Chicago office -> Salesforce HTTPS">
+      </div>
+      <div class="actions">
+        <button type="submit">Generate set commands</button>
+        <button type="button" class="secondary" id="load-example">Reload example</button>
+      </div>
+    </form>
+  </section>
+  <section class="panel">
+    <h2>Output</h2>
+    <div id="summary" class="summary" style="display:none;"></div>
+    <div id="error" class="error-box" style="display:none;"></div>
+    <pre id="output">Fill the form and click Generate.</pre>
+    <div class="actions" id="copy-row" style="display:none;">
+      <button type="button" id="copy-btn">Copy to clipboard</button>
+      <button type="button" class="secondary" id="download-btn">Download .set</button>
+    </div>
+    <details id="debug-details" style="display:none;">
+      <summary>Object summary</summary>
+      <div id="debug-content"></div>
+    </details>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+
+// --- Live normalization preview -------------------------------------------
+async function previewField(fieldId, previewId) {
+  const text = $(fieldId).value;
+  try {
+    const resp = await fetch("/preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ field: fieldId, value: text }),
+    });
+    const data = await resp.json();
+    const el = $(previewId);
+    if (data.error) {
+      el.className = "preview err";
+      el.textContent = "⚠ " + data.error;
+      return;
+    }
+    if (data.normalized.length === 0) {
+      el.className = "preview";
+      el.textContent = "(empty)";
+      return;
+    }
+    const summary = data.normalized.join(", ");
+    el.className = data.was_changed ? "preview warn" : "preview ok";
+    el.textContent = "→ " + summary + (data.was_changed ? "  (normalized)" : "");
+  } catch (e) {
+    $(previewId).textContent = "preview unavailable";
+  }
+}
+
+["src_ips", "dst_ips", "tcp_ports", "udp_ports"].forEach((id) => {
+  $(id).addEventListener("input", () => previewField(id, id + "_preview"));
+});
+
+// --- Form submit ----------------------------------------------------------
+$("poac-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const resp = await fetch("/generate", { method: "POST", body: fd });
+  const data = await resp.json();
+  const errEl = $("error");
+  const outEl = $("output");
+  const sumEl = $("summary");
+  const copyRow = $("copy-row");
+  const debugDetails = $("debug-details");
+  errEl.style.display = "none";
+  if (!data.ok) {
+    errEl.textContent = data.error;
+    errEl.style.display = "block";
+    outEl.textContent = "—";
+    sumEl.style.display = "none";
+    copyRow.style.display = "none";
+    debugDetails.style.display = "none";
+    return;
+  }
+  outEl.textContent = data.set_commands;
+  sumEl.style.display = "flex";
+  sumEl.innerHTML =
+    '<span class="pill">addresses: <b>' + data.addresses.length + '</b></span>' +
+    '<span class="pill">applications: <b>' + data.applications.length + '</b></span>' +
+    '<span class="pill">policy: <b>' + data.policy.name + "</b></span>" +
+    '<span class="pill">action: <b>' + data.policy.action + "</b></span>";
+  copyRow.style.display = "flex";
+  debugDetails.style.display = "block";
+  const dc = $("debug-content");
+  let html = "<h4>Address objects</h4><pre>" +
+    (data.addresses.map(a => a.name + "  →  " + a.value).join("\n") || "(none)") +
+    "</pre><h4>Applications</h4><pre>" +
+    (data.applications.map(a => a.name + "  →  " + a.protocol + "/" + a.port_spec).join("\n") || "(none)") +
+    "</pre>";
+  dc.innerHTML = html;
+});
+
+// --- Copy / download ------------------------------------------------------
+$("copy-btn").addEventListener("click", async () => {
+  await navigator.clipboard.writeText($("output").textContent);
+  const orig = $("copy-btn").textContent;
+  $("copy-btn").textContent = "Copied ✓";
+  setTimeout(() => ($("copy-btn").textContent = orig), 1500);
+});
+$("download-btn").addEventListener("click", () => {
+  const blob = new Blob([$("output").textContent], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = ($("name").value || "policy") + ".set";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+$("load-example").addEventListener("click", () => {
+  $("name").value = "sales-chi-to-sfdc";
+  $("from_zone").value = "users-chi";
+  $("to_zone").value = "internet";
+  $("src_ips").value = "10.20.0.0/16\n10.21.0.1/24";
+  $("dst_ips").value = "203.0.113.10";
+  $("tcp_ports").value = "443\n8443";
+  $("udp_ports").value = "";
+  $("description").value = "Sales team Chicago office -> Salesforce HTTPS";
+  ["src_ips", "dst_ips", "tcp_ports", "udp_ports"].forEach((id) =>
+    previewField(id, id + "_preview")
+  );
+});
+
+// Trigger initial preview
+["src_ips", "dst_ips", "tcp_ports", "udp_ports"].forEach((id) =>
+  previewField(id, id + "_preview")
+);
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Example 2: DNS egress (TCP+UDP)
+name: allow-dns-egress
+from_zone: trust
+to_zone: untrust
+src_ips:
+  - 10.0.0.0/8
+dst_ips:
+  - 8.8.8.8
+  - 1.1.1.1
+tcp_ports:
+  - 53
+udp_ports:
+  - 53
+action: permit
+description: Allow internal hosts to reach public DNS
