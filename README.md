@@ -1,4 +1,4 @@
-# poac — Juniper SRX set-command generator
+# Juniper Policy Generator
 
 A small web app that turns a structured form (policy name, zones, IPs, ports) into a complete block of Juniper `set` commands you paste into your SRX. The app auto-creates the matching address and application objects, in the right order, with deterministic names.
 
