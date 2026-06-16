@@ -13,7 +13,7 @@ set security address-book global address {{ addr.name }} {{ addr.value }}
 {% if applications -%}
 # === Applications ===
 {% for app in applications -%}
-set security applications application {{ app.name }} protocol {{ app.protocol }} destination-port {{ app.port_spec }}
+set applications application {{ app.name }} protocol {{ app.protocol }} destination-port {{ app.port_spec }}
 {% endfor -%}
 {% endif -%}
 # === Policy ===

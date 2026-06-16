@@ -27,7 +27,7 @@ class TestRenderSetHappyPath:
         # Address object: name == value
         assert "set security address-book global address 10.0.0.0/24 10.0.0.0/24" in out
         # Application
-        assert "set security applications application tcp-443 protocol tcp destination-port 443" in out
+        assert "set applications application tcp-443 protocol tcp destination-port 443" in out
         # Policy
         assert "set security policies from-zone trust to-zone untrust policy p1" in out
         assert "match source-address 10.0.0.0/24" in out
@@ -163,7 +163,7 @@ class TestRenderSetOrder:
         )
         out = _render(p)
         addr_pos = out.index("set security address-book")
-        app_pos = out.index("set security applications")
+        app_pos = out.index("set applications application")
         pol_pos = out.index("set security policies from-zone")
         assert addr_pos < app_pos < pol_pos
 
