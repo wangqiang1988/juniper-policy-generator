@@ -153,7 +153,7 @@
 <main>
   <section class="panel">
     <h2>Input</h2>
-    <form id="poac-form">
+    <form id="jpg-form">
       <div class="field">
         <label>Policy name</label>
         <input type="text" id="name" name="name" value="sales-chi-to-sfdc" required>
@@ -259,7 +259,7 @@ async function previewField(fieldId, previewId) {
 });
 
 // --- Form submit ----------------------------------------------------------
-$("poac-form").addEventListener("submit", async (e) => {
+$("jpg-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const fd = new FormData(e.target);
   const resp = await fetch("/generate", { method: "POST", body: fd });

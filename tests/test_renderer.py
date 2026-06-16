@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import pytest
 
-from poac.models import PolicyInput
-from poac.renderer import render_set
-from poac.validator import ValidationError
+from juniper_policy_generator.models import PolicyInput
+from juniper_policy_generator.renderer import render_set
+from juniper_policy_generator.validator import ValidationError
 
 
 def _render(p: PolicyInput) -> str:

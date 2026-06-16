@@ -3,8 +3,8 @@
 Rules:
   - IP/CIDR without prefix becomes /32
   - IP/CIDR with host bits set is normalized to its network address
-  - Single port becomes "poac-{proto}-{port}"
-  - Port range becomes "poac-{proto}-{start}-to-{end}"
+  - Single port becomes "{proto}-{port}"
+  - Port range becomes "{proto}-{start}-to-{end}"
 """
 from __future__ import annotations
 

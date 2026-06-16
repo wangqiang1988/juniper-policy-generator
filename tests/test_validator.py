@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from poac.validator import (
+from juniper_policy_generator.validator import (
     ValidationError,
     normalize_ip_list,
     normalize_port_list,

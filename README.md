@@ -75,15 +75,15 @@ That's it. Fill the form, click **Generate set commands**, copy the output, past
 
 Address object names are the CIDR itself (the name on the SRX equals the value). Application names are `{protocol}-{port}`. If you regenerate a policy with the same inputs, the new command block will collide on existing objects — rename or delete the old ones first.
 
-> Note: Juniper address object names typically must match `[a-zA-Z0-9_-]{1,63}`. The forward slash `/` in `10.20.0.0/24` is not legal in Junos object names. If the device rejects the name, change `ip_to_object_name` in `poac/naming.py` to return a sanitized form (e.g. `addr-10-20-0-0-24`).
+> Note: Juniper address object names typically must match `[a-zA-Z0-9_-]{1,63}`. The forward slash `/` in `10.20.0.0/24` is not legal in Junos object names. If the device rejects the name, change `ip_to_object_name` in `juniper_policy_generator/naming.py` to return a sanitized form (e.g. `addr-10-20-0-0-24`).
 
 ## Architecture
 
 ```
-poac-junos/
+juniper-policy-generator/
 ├── pyproject.toml
 ├── app.py                       # FastAPI: /, /preview, /generate
-├── poac/
+├── juniper_policy_generator/
 │   ├── models.py                # Pydantic models
 │   ├── naming.py                # CIDR/port normalization, naming rules
 │   ├── validator.py             # Input validation
@@ -115,10 +115,10 @@ poac-junos/
 
 ## Adding new fields (e.g., owner, ticket, expire)
 
-1. Add the field to `PolicyInput` in `poac/models.py`.
-2. Add the field to the form in `poac/templates/index.html`.
+1. Add the field to `PolicyInput` in `juniper_policy_generator/models.py`.
+2. Add the field to the form in `juniper_policy_generator/templates/index.html`.
 3. Pass it through in `app.py` `generate()`.
-4. Reference it in `poac/templates/policy.set.j2` if you want it in the output.
+4. Reference it in `juniper_policy_generator/templates/policy.set.j2` if you want it in the output.
 5. Add a test in `tests/test_renderer.py`.
 
 ## Out of scope (intentional)

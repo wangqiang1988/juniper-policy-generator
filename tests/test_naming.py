@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from poac.naming import (
+from juniper_policy_generator.naming import (
     cidr_was_normalized,
     ip_to_object_name,
     normalize_cidr,

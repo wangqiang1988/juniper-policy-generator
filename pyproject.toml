@@ -1,5 +1,5 @@
 [project]
-name = "poac-junos"
+name = "juniper-policy-generator"
 version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.12"

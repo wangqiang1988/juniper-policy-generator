@@ -7,15 +7,15 @@ from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
-from poac.models import PolicyInput
-from poac.naming import cidr_was_normalized, normalize_cidr, parse_port_spec
-from poac.renderer import render_set
-from poac.validator import ValidationError
+from juniper_policy_generator.models import PolicyInput
+from juniper_policy_generator.naming import cidr_was_normalized, normalize_cidr, parse_port_spec
+from juniper_policy_generator.renderer import render_set
+from juniper_policy_generator.validator import ValidationError
 
-TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "poac", "templates")
+TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "juniper_policy_generator", "templates")
 templates = Jinja2Templates(directory=TEMPLATE_DIR)
 
-app = FastAPI(title="poac", description="Juniper SRX set-command generator")
+app = FastAPI(title="Juniper Policy Generator", description="Juniper SRX set-command generator")
 
 
 @app.get("/", response_class=HTMLResponse)
