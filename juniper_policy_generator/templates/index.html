@@ -143,12 +143,39 @@
   .summary .pill b { color: var(--text); }
   details summary { cursor: pointer; color: var(--muted); font-size: 12px; }
   details { margin-top: 12px; }
+  .steps {
+    margin: 10px 0 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .steps li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .steps li b {
+    color: var(--accent);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
 </style>
 </head>
 <body>
 <header>
   <h1>Juniper Policy Generator</h1>
   <div class="sub">Fill the form, get a clean <code>set</code> command block — including auto-generated address and application objects, with CIDR normalized. Paste it into your SRX.</div>
+  <ol class="steps">
+    <li><b>1.</b> Fill in policy name, zones, IPs and ports</li>
+    <li><b>2.</b> Watch the live normalization preview</li>
+    <li><b>3.</b> Click <b>Generate set commands</b></li>
+    <li><b>4.</b> Copy the output (or download <code>.set</code>)</li>
+    <li><b>5.</b> On the SRX: <code>configure</code> → <code>load set /var/tmp/policy.set</code> → <code>commit</code></li>
+  </ol>
 </header>
 <main>
   <section class="panel">
