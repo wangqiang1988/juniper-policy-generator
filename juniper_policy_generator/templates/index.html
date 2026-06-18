@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Juniper Policy Generator</title>
+<title>{{ t('title') }}</title>
 <style>
   :root {
     --bg: #0f172a;
@@ -21,7 +21,8 @@
   }
   * { box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", Roboto, sans-serif;
     margin: 0;
     background: var(--bg);
     color: var(--text);
@@ -31,9 +32,37 @@
     background: var(--panel);
     border-bottom: 1px solid var(--border);
     padding: 16px 24px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
   }
+  header .title-block { flex: 1 1 auto; min-width: 0; }
   header h1 { margin: 0; font-size: 20px; color: var(--accent); }
-  header .sub { color: var(--muted); font-size: 13px; }
+  header .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  header .lang-switch {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+    background: var(--panel-2);
+    flex: 0 0 auto;
+    align-self: center;
+  }
+  header .lang-switch a {
+    color: var(--muted);
+    text-decoration: none;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  header .lang-switch a.active {
+    background: var(--accent-2);
+    color: #0b1220;
+  }
+  header .lang-switch a:hover:not(.active) { color: var(--text); }
   main {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -164,88 +193,98 @@
 </head>
 <body>
 <header>
-  <h1>Juniper Policy Generator</h1>
-  <div class="sub">Fill the form, get a clean <code>set</code> command block — including auto-generated address and application objects, with CIDR normalized. Paste it into your SRX.</div>
-  <ol class="steps">
-    <li><b>step1:</b> 输入策略信息</li>
-    <li><b>step2:</b> 点击生成</li>
-    <li><b>step3:</b> 复制到剪切板</li>
-  </ol>
+  <div class="title-block">
+    <h1>{{ t('title') }}</h1>
+    <div class="sub">{{ t('description') }}</div>
+    <ol class="steps">
+      <li>{{ t('step1') }}</li>
+      <li>{{ t('step2') }}</li>
+      <li>{{ t('step3') }}</li>
+    </ol>
+  </div>
+  <nav class="lang-switch" aria-label="Language">
+    <a href="?lang=en" class="{% if lang == 'en' %}active{% endif %}">EN</a>
+    <a href="?lang=zh" class="{% if lang == 'zh' %}active{% endif %}">中文</a>
+  </nav>
 </header>
 <main>
   <section class="panel">
-    <h2>Input</h2>
+    <h2>{{ t('input_heading') }}</h2>
     <form id="jpg-form">
       <div class="field">
-        <label>Policy name</label>
+        <label>{{ t('policy_name') }}</label>
         <input type="text" id="name" name="name" value="sales-chi-to-sfdc" required>
       </div>
       <div class="row">
         <div class="field">
-          <label>From zone</label>
+          <label>{{ t('from_zone') }}</label>
           <input type="text" id="from_zone" name="from_zone" value="users-chi" required>
         </div>
         <div class="field">
-          <label>To zone</label>
+          <label>{{ t('to_zone') }}</label>
           <input type="text" id="to_zone" name="to_zone" value="internet" required>
         </div>
       </div>
       <div class="field">
-        <label>Source IPs (one per line: IP or CIDR)</label>
-        <textarea id="src_ips" name="src_ips" rows="3" placeholder="10.20.0.0/16&#10;10.21.0.0/16">10.20.0.0/16&#10;10.21.0.1/24</textarea>
+        <label>{{ t('src_ips_label') }}</label>
+        <textarea id="src_ips" name="src_ips" rows="3">10.20.0.0/16&#10;10.21.0.1/24</textarea>
         <div class="preview" id="src_ips_preview"></div>
       </div>
       <div class="field">
-        <label>Destination IPs (one per line: IP or CIDR)</label>
-        <textarea id="dst_ips" name="dst_ips" rows="3" placeholder="203.0.113.0/24">203.0.113.10</textarea>
+        <label>{{ t('dst_ips_label') }}</label>
+        <textarea id="dst_ips" name="dst_ips" rows="3">203.0.113.10</textarea>
         <div class="preview" id="dst_ips_preview"></div>
       </div>
       <div class="row">
         <div class="field">
-          <label>TCP ports (one per line: port or start-end)</label>
-          <textarea id="tcp_ports" name="tcp_ports" rows="3" placeholder="443&#10;8000-8100">443&#10;8443</textarea>
+          <label>{{ t('tcp_ports_label') }}</label>
+          <textarea id="tcp_ports" name="tcp_ports" rows="3">443&#10;8443</textarea>
           <div class="preview" id="tcp_ports_preview"></div>
         </div>
         <div class="field">
-          <label>UDP ports (one per line)</label>
-          <textarea id="udp_ports" name="udp_ports" rows="3" placeholder="53"></textarea>
+          <label>{{ t('udp_ports_label') }}</label>
+          <textarea id="udp_ports" name="udp_ports" rows="3"></textarea>
           <div class="preview" id="udp_ports_preview"></div>
         </div>
       </div>
       <div class="field">
-        <label>Action</label>
+        <label>{{ t('action') }}</label>
         <div class="radio-group">
-          <label><input type="radio" name="action" value="permit" checked> permit</label>
-          <label><input type="radio" name="action" value="deny"> deny</label>
+          <label><input type="radio" name="action" value="permit" checked> {{ t('permit') }}</label>
+          <label><input type="radio" name="action" value="deny"> {{ t('deny') }}</label>
         </div>
       </div>
       <div class="field">
-        <label>Description (optional)</label>
-        <input type="text" id="description" name="description" value="Sales team Chicago office -> Salesforce HTTPS">
+        <label>{{ t('description_label') }}</label>
+        <input type="text" id="description" name="description" value="">
       </div>
       <div class="actions">
-        <button type="submit">Generate set commands</button>
-        <button type="button" class="secondary" id="load-example">Reload example</button>
+        <button type="submit">{{ t('generate') }}</button>
+        <button type="button" class="secondary" id="load-example">{{ t('reload_example') }}</button>
       </div>
     </form>
   </section>
   <section class="panel">
-    <h2>Output</h2>
+    <h2>{{ t('output_heading') }}</h2>
     <div id="summary" class="summary" style="display:none;"></div>
     <div id="error" class="error-box" style="display:none;"></div>
-    <pre id="output">Fill the form and click Generate.</pre>
+    <pre id="output">{{ t('empty_output') }}</pre>
     <div class="actions" id="copy-row" style="display:none;">
-      <button type="button" id="copy-btn">Copy to clipboard</button>
-      <button type="button" class="secondary" id="download-btn">Download .set</button>
+      <button type="button" id="copy-btn">{{ t('copy') }}</button>
+      <button type="button" class="secondary" id="download-btn">{{ t('download') }}</button>
     </div>
     <details id="debug-details" style="display:none;">
-      <summary>Object summary</summary>
+      <summary>{{ t('summary_object') }}</summary>
       <div id="debug-content"></div>
     </details>
   </section>
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
+// Translation strings for JS, embedded by the server.
+const I18N = {{ i18n_json | safe }};
+const T_EMPTY_OUTPUT = I18N.empty_output;
+function T(key) { return I18N[key] || key; }
 
 // --- Live normalization preview -------------------------------------------
 async function previewField(fieldId, previewId) {
@@ -265,14 +304,14 @@ async function previewField(fieldId, previewId) {
     }
     if (data.normalized.length === 0) {
       el.className = "preview";
-      el.textContent = "(empty)";
+      el.textContent = T("empty_preview");
       return;
     }
     const summary = data.normalized.join(", ");
     el.className = data.was_changed ? "preview warn" : "preview ok";
-    el.textContent = "→ " + summary + (data.was_changed ? "  (normalized)" : "");
+    el.textContent = "→ " + summary + (data.was_changed ? T("normalized_suffix") : "");
   } catch (e) {
-    $(previewId).textContent = "preview unavailable";
+    $(previewId).textContent = T("preview_unavailable");
   }
 }
 
@@ -304,10 +343,10 @@ $("jpg-form").addEventListener("submit", async (e) => {
   outEl.textContent = data.set_commands;
   sumEl.style.display = "flex";
   sumEl.innerHTML =
-    '<span class="pill">addresses: <b>' + data.addresses.length + '</b></span>' +
-    '<span class="pill">applications: <b>' + data.applications.length + '</b></span>' +
-    '<span class="pill">policy: <b>' + data.policy.name + "</b></span>" +
-    '<span class="pill">action: <b>' + data.policy.action + "</b></span>";
+    '<span class="pill">' + T("summary_addresses") + ' <b>' + data.addresses.length + '</b></span>' +
+    '<span class="pill">' + T("summary_applications") + ' <b>' + data.applications.length + '</b></span>' +
+    '<span class="pill">' + T("summary_policy") + ' <b>' + data.policy.name + '</b></span>' +
+    '<span class="pill">' + T("summary_action") + ' <b>' + data.policy.action + '</b></span>';
   copyRow.style.display = "flex";
   debugDetails.style.display = "block";
   const dc = $("debug-content");
@@ -321,16 +360,12 @@ $("jpg-form").addEventListener("submit", async (e) => {
 
 // --- Copy / download ------------------------------------------------------
 async function copyToClipboard(text) {
-  // Path 1: modern async Clipboard API (HTTPS / localhost only)
   if (navigator.clipboard && window.isSecureContext) {
     try {
       await navigator.clipboard.writeText(text);
       return true;
-    } catch (e) {
-      // fall through
-    }
+    } catch (e) { /* fall through */ }
   }
-  // Path 2: hidden textarea + execCommand (works on http://192.168.x.x, file://, etc.)
   const ta = document.createElement("textarea");
   ta.value = text;
   ta.setAttribute("readonly", "");
@@ -347,11 +382,7 @@ async function copyToClipboard(text) {
   ta.select();
   ta.setSelectionRange(0, text.length);
   let ok = false;
-  try {
-    ok = document.execCommand("copy");
-  } catch (e) {
-    ok = false;
-  }
+  try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
   document.body.removeChild(ta);
   if (prevActive && prevActive.focus) prevActive.focus();
   return ok;
@@ -359,30 +390,31 @@ async function copyToClipboard(text) {
 
 $("copy-btn").addEventListener("click", async () => {
   const text = $("output").textContent;
-  if (!text || text === "Fill the form and click Generate.") {
-    $("copy-btn").textContent = "Nothing to copy";
-    setTimeout(() => ($("copy-btn").textContent = "Copy to clipboard"), 1500);
+  if (!text || text === T_EMPTY_OUTPUT) {
+    const orig = $("copy-btn").textContent;
+    $("copy-btn").textContent = T("nothing_to_copy");
+    setTimeout(() => ($("copy-btn").textContent = orig), 1500);
     return;
   }
   const ok = await copyToClipboard(text);
   const orig = $("copy-btn").textContent;
   if (ok) {
-    $("copy-btn").textContent = "Copied ✓";
+    $("copy-btn").textContent = T("copied");
     setTimeout(() => ($("copy-btn").textContent = orig), 1500);
   } else {
-    // Last resort: highlight the output so the user can press Ctrl+C
     const range = document.createRange();
     range.selectNodeContents($("output"));
     const sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
-    $("copy-btn").textContent = "Press Ctrl+C";
+    $("copy-btn").textContent = T("press_ctrl_c");
     setTimeout(() => {
       $("copy-btn").textContent = orig;
       sel.removeAllRanges();
     }, 3000);
   }
 });
+
 $("download-btn").addEventListener("click", () => {
   const blob = new Blob([$("output").textContent], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
@@ -392,6 +424,7 @@ $("download-btn").addEventListener("click", () => {
   a.click();
   URL.revokeObjectURL(url);
 });
+
 $("load-example").addEventListener("click", () => {
   $("name").value = "sales-chi-to-sfdc";
   $("from_zone").value = "users-chi";

@@ -1,12 +1,20 @@
 """FastAPI application entrypoint."""
 from __future__ import annotations
 
+import json
 import os
 
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
+from juniper_policy_generator.i18n import (
+    DEFAULT_LANG,
+    SUPPORTED_LANGS,
+    TRANSLATIONS,
+    make_t,
+    normalize_lang,
+)
 from juniper_policy_generator.models import PolicyInput
 from juniper_policy_generator.naming import cidr_was_normalized, normalize_cidr, parse_port_spec
 from juniper_policy_generator.renderer import render_set
@@ -18,9 +26,43 @@ templates = Jinja2Templates(directory=TEMPLATE_DIR)
 app = FastAPI(title="Juniper Policy Generator", description="Juniper SRX set-command generator")
 
 
+def _resolve_lang(request: Request, query_lang: str | None = None) -> str:
+    """Pick the active language.
+
+    Priority: query param > cookie > Accept-Language header > default.
+    """
+    if query_lang:
+        normalized = normalize_lang(query_lang)
+        if normalized == query_lang:
+            return normalized
+    cookie_lang = request.cookies.get("lang")
+    if cookie_lang:
+        normalized = normalize_lang(cookie_lang)
+        if normalized == cookie_lang:
+            return normalized
+    accept = request.headers.get("Accept-Language", "").lower()
+    if "zh" in accept:
+        return "zh"
+    return DEFAULT_LANG
+
+
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request) -> object:
-    return templates.TemplateResponse(request, "index.html")
+async def index(request: Request, lang: str = "") -> object:
+    active_lang = _resolve_lang(request, lang or None)
+    t = make_t(active_lang)
+    response = templates.TemplateResponse(
+        request,
+        "index.html",
+        {
+            "t": t,
+            "lang": active_lang,
+            "supported_langs": SUPPORTED_LANGS,
+            "i18n_json": json.dumps(TRANSLATIONS[active_lang], ensure_ascii=False),
+        },
+    )
+    # Remember the choice in a cookie so the user doesn't have to keep picking it.
+    response.set_cookie(key="lang", value=active_lang, max_age=31536000, samesite="lax")
+    return response
 
 
 @app.get("/health")
