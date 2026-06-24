@@ -28,11 +28,13 @@ class TestRenderSetHappyPath:
         assert "set security address-book global address 10.0.0.0/24 10.0.0.0/24" in out
         # Application
         assert "set applications application tcp-443 protocol tcp destination-port 443" in out
-        # Policy
-        assert "set security policies from-zone trust to-zone untrust policy p1" in out
-        assert "match source-address 10.0.0.0/24" in out
-        assert "match application tcp-443" in out
-        assert "then permit" in out
+        # Policy: match/then lines carry the policy path; no bare header line.
+        assert "set security policies from-zone trust to-zone untrust policy p1 match source-address 10.0.0.0/24" in out
+        assert "set security policies from-zone trust to-zone untrust policy p1 match application tcp-443" in out
+        assert "set security policies from-zone trust to-zone untrust policy p1 then permit" in out
+        # No bare header line (without match/then).
+        bare = "\nset security policies from-zone trust to-zone untrust policy p1\n"
+        assert bare not in out
         assert "then count" not in out
 
     def test_full_example(self) -> None:
@@ -132,8 +134,9 @@ class TestRenderSetHappyPath:
         )
         out = _render(p)
         assert "description" not in out
-        # Policy line still present, just no description
-        assert "set security policies from-zone trust to-zone untrust policy p1" in out
+        # Match/then lines still present, just no description.
+        assert "set security policies from-zone trust to-zone untrust policy p1 match destination-address 10.0.0.0/24" in out
+        assert "set security policies from-zone trust to-zone untrust policy p1 then permit" in out
 
     def test_no_count_clause_anywhere(self) -> None:
         """Global check: `then count` must never appear, regardless of inputs."""

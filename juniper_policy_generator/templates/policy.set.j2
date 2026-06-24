@@ -17,8 +17,9 @@ set applications application {{ app.name }} protocol {{ app.protocol }} destinat
 {% endfor -%}
 {% endif -%}
 # === Policy ===
-set security policies from-zone {{ policy.from_zone }} to-zone {{ policy.to_zone }} policy {{ policy.name }}{% if policy.description %} description "{{ policy.description }}"{% endif %}
-
+{% if policy.description -%}
+set security policies from-zone {{ policy.from_zone }} to-zone {{ policy.to_zone }} policy {{ policy.name }} description "{{ policy.description }}"
+{% endif -%}
 {% for src in policy.source_addresses -%}
 set security policies from-zone {{ policy.from_zone }} to-zone {{ policy.to_zone }} policy {{ policy.name }} match source-address {{ src }}
 {% endfor -%}
